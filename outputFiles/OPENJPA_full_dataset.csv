@@ -1,4 +1,4 @@
-"Version,VersionIndex,File Name,LOC,LOC_touched,NR,NFix,NAuth,LOC_added,MAX_LOC_added,AVG_LOC_added,Churn,MAX_Churn,AVG_Churn,ChgSetSize,MAX_ChgSet,AVG_ChgSet,Age,WeightedAge,Smells,Buggy"
+Version,VersionIndex,File Name,LOC,LOC_touched,NR,NFix,NAuth,LOC_added,MAX_LOC_added,AVG_LOC_added,Churn,MAX_Churn,AVG_Churn,ChgSetSize,MAX_ChgSet,AVG_ChgSet,Age,WeightedAge,Smells,Buggy
 1.0.0,1,openjpa-examples/src/main/java/hellojpa/Main.java,76,98,4,1,1,87,58,21.75,98,58,24.50,1374,1263,343.50,304.57,29848.19,11,No
 1.0.0,1,openjpa-examples/src/main/java/hellojpa/Message.java,72,92,3,0,1,82,54,27.33,92,54,30.67,1275,1263,425.00,304.57,28020.75,11,No
 1.0.0,1,openjpa-examples/src/main/java/relations/Deity.java,197,237,4,0,2,217,203,54.25,237,203,59.25,1272,1263,318.00,285.76,67724.43,20,No

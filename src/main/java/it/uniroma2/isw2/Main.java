@@ -1,7 +1,7 @@
 package it.uniroma2.isw2;
 
 import it.uniroma2.isw2.builder.DatasetBuilder;
-
+import it.uniroma2.isw2.builder.WekaBuilder;
 
 
 public class Main {
@@ -30,7 +30,7 @@ public class Main {
                 break;
 
             case "m2":
-                // Milestone2.run();
+                WekaBuilder.run(OUTPUT + "/OPENJPA_full_dataset.csv", OUTPUT);
                 break;
 
             case "m3":

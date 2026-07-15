@@ -24,15 +24,29 @@ public class DatasetBuilder {
     private static final Pattern PRE_RELEASE = Pattern.compile("(?i).*(alpha|beta|rc|snapshot|m\\d+|ea\\d*).*");
 
     // ── CSV header ───────────────────────────────────────────────────────────────
-    private static final String CSV_HEADER =
-            "Version,VersionIndex,File Name,"
-                    + "LOC,LOC_touched,NR,NFix,NAuth,"
-                    + "LOC_added,MAX_LOC_added,AVG_LOC_added,"
-                    + "Churn,MAX_Churn,AVG_Churn,"
-                    + "ChgSetSize,MAX_ChgSet,AVG_ChgSet,"
-                    + "Age,WeightedAge,"
-                    + "Smells,"
-                    + "Buggy";
+    private static final String[] CSV_HEADER = {
+            "Version",
+            "VersionIndex",
+            "File Name",
+            "LOC",
+            "LOC_touched",
+            "NR",
+            "NFix",
+            "NAuth",
+            "LOC_added",
+            "MAX_LOC_added",
+            "AVG_LOC_added",
+            "Churn",
+            "MAX_Churn",
+            "AVG_Churn",
+            "ChgSetSize",
+            "MAX_ChgSet",
+            "AVG_ChgSet",
+            "Age",
+            "WeightedAge",
+            "Smells",
+            "Buggy"
+    };
 
     private DatasetBuilder(){}
 
