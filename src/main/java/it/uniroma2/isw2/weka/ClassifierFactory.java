@@ -10,10 +10,13 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.classifiers.trees.RandomForest;
+import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.MultiFilter;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.filters.supervised.instance.Resample;
+import weka.filters.supervised.instance.SpreadSubsample;
+import weka.filters.supervised.instance.SMOTE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,16 +63,18 @@ public class ClassifierFactory {
 
         List<Filter> filters = new ArrayList<>();
 
-        if (balancing == BalancingStrategy.OVERSAMPLING) {
-            filters.add(buildOversampling(data));
+        switch (balancing) {
+            case OVERSAMPLING  -> filters.add(buildOversampling(data));
+            case UNDERSAMPLING -> filters.add(buildUndersampling());
+            case SMOTE         -> filters.add(buildSmote(data));
+            case NONE          -> { /* no filter */ }
         }
 
         if (featureSelection == FeatureSelectionStrategy.WRAPPER) {
             filters.add(buildWrapper());
         }
 
-        if (filters.isEmpty())
-            return base;
+        if (filters.isEmpty()) return base;
 
         MultiFilter multi = new MultiFilter();
         multi.setFilters(filters.toArray(new Filter[0]));
@@ -141,4 +146,31 @@ public class ClassifierFactory {
 
         return r;
     }
+
+    /**
+     * Undersampling via SpreadSubsample.
+     * distributionSpread=1.0 means uniform class distribution:
+     * majority class is reduced to match minority class count.
+     * On your dataset this discards 85% of instances — expect
+     * higher recall and lower precision vs oversampling.
+     */
+    private static Filter buildUndersampling() {
+        SpreadSubsample ss = new SpreadSubsample();
+        ss.setDistributionSpread(1.0);
+        return ss;
+    }
+
+    private static Filter buildSmote(Instances data) {
+        int[] counts  = data.attributeStats(data.classIndex()).nominalCounts;
+        int majority  = Math.max(counts[0], counts[1]);
+        int minority  = Math.min(counts[0], counts[1]);
+        double percent = (double)(majority - minority) / minority * 100.0;
+        percent = Math.max(100.0, percent); // SMOTE minimum is 100%
+
+        SMOTE smote = new SMOTE();
+        smote.setPercentage(percent);
+        smote.setNearestNeighbors(5);
+        return smote;
+    }
+
 }

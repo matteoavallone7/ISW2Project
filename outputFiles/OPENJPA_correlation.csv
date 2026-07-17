@@ -1,0 +1,17 @@
+Feature,NSmells,Defectiveness
+LOC,0.94,0.29
+MAX_LOC_added,0.79,0.26
+MAX_Churn,0.73,0.24
+AVG_LOC_added,0.69,0.20
+LOC_added,0.63,0.24
+AVG_Churn,0.62,0.18
+LOC_touched,0.52,0.21
+Churn,0.52,0.21
+WeightedAge,0.41,0.20
+NAuth,0.39,0.24
+NFix,0.33,0.23
+AVG_ChgSet,-0.24,-0.18
+ChgSetSize,-0.21,-0.04
+Age,-0.09,0.04
+NR,0.08,0.16
+MAX_ChgSet,-0.05,-0.01
