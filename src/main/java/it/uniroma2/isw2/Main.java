@@ -1,5 +1,6 @@
 package it.uniroma2.isw2;
 
+import it.uniroma2.isw2.builder.ClassRanker;
 import it.uniroma2.isw2.builder.DatasetBuilder;
 import it.uniroma2.isw2.builder.WekaBuilder;
 import it.uniroma2.isw2.builder.WhatIfBuilder;
@@ -39,7 +40,8 @@ public class Main {
                 break;
 
             case "m4":
-                // Milestone4.run();
+                ClassRanker ranker = new ClassRanker(REPO, OUTPUT);
+                ranker.run();
                 break;
 
             default:

@@ -1,0 +1,3 @@
+Selection,Rank,Class,NSmells,LOC,Methods,SelectionFormula
+Class 1,4,openjpa-jdbc/src/main/java/org/apache/openjpa/jdbc/kernel/JDBCStoreManager.java,642,1784,121,"first+3 (M=13, 13 mod 5=3)"
+Class 2,301,openjpa-kernel/src/main/java/org/apache/openjpa/datacache/ConcurrentDataCache.java,26,166,21,"last-3 (M=13, 13 mod 5=3)"
