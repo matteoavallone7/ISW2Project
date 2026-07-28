@@ -6,6 +6,8 @@ import org.apache.commons.csv.CSVPrinter;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -16,7 +18,7 @@ public class ClassRanker {
 
     // ── Configuration ─────────────────────────────────────────────────────────
     private static final String  LAST_RELEASE = "4.1.1";
-    private static final int     MIN_LOC      = 150;   // exclude trivially small files
+    private static final int     MIN_LOC      = 80;   // exclude trivially small files
     private static final int     MIN_METHODS = 5;
     private static final int     NAME_INITIAL_INDEX = 3; // M=13, 13 mod 5 = 3
 
@@ -103,6 +105,7 @@ public class ClassRanker {
                 // Exclude anonymous/inner class files
                 .filter(c -> !new File(c.path).getName().contains("$"))
                 .filter(c -> !isExample(c.path))
+                .filter(c -> !isDataOrEventClass(c.path))
                 .collect(Collectors.toList());
 
         LOGGER.info("After filtering: " + filtered.size() + " classes");
@@ -168,6 +171,30 @@ public class ClassRanker {
                     && (t.contains(" class ") || t.startsWith("class "))
                     && !t.startsWith("//") && !t.startsWith("*");
         });
+    }
+
+    private boolean isDataOrEventClass(String path) {
+        String name = new File(path).getName();
+
+        // Check naming conventions for pure value/event containers
+        if (name.endsWith("Event.java") ||
+                name.endsWith("Exception.java") ||
+                name.endsWith("Info.java") ||
+                name.endsWith("DTO.java") ||
+                name.endsWith("Key.java")) {
+            return true;
+        }
+
+        // Check parent class inheritance
+        try {
+            String lowerContent = Files.readString(Path.of(path)).toLowerCase();
+            return lowerContent.contains("extends eventobject")
+                    || lowerContent.contains("extends exception")
+                    || lowerContent.contains("implements serializable");
+        } catch (IOException e) {
+            LOGGER.warning("Could not read file for data/event class check: " + path);
+            return false;
+        }
     }
 
     private boolean isExample(String path) {
