@@ -20,6 +20,7 @@ public class ClassRanker {
     private static final String  LAST_RELEASE = "4.1.1";
     private static final int     MIN_LOC      = 80;   // exclude trivially small files
     private static final int     MIN_METHODS = 5;
+    private static final int     MAX_METHODS = 100;
     private static final int     NAME_INITIAL_INDEX = 3; // M=13, 13 mod 5 = 3
 
     private final String repoPath;
@@ -94,6 +95,7 @@ public class ClassRanker {
         List<ClassInfo> filtered = classes.stream()
                 .filter(c -> c.loc >= MIN_LOC)
                 .filter(c -> c.methods >= MIN_METHODS)
+                .filter(c -> c.methods <= MAX_METHODS)
                 .filter(c -> !c.isInterface)
                 .filter(c -> !c.isAbstract)
                 .filter(c -> !c.isEnum)

@@ -1,0 +1,154 @@
+PMD Code Smell Report
+Rulesets: category/java/design.xml, category/java/errorprone.xml, category/java/bestpractices.xml, category/java/codestyle.xml
+Files with violations: 1
+Total violations: 12
+================================================================================
+
+FILE: 
+  12 violation(s)
+--------------------------------------------------------------------------------
+[1] Rule: FieldNamingConventions
+    Category: Code Style
+    Priority: High
+    Line: 37
+    Message: The field name '_max' doesn't match '[a-z][a-zA-Z0-9]*'
+    Code:
+         35:     
+         36:     private static final long serialVersionUID = 1L;
+      >> 37:     private int _max = -1;
+         38: 
+         39:     public LRUMap() {
+
+[2] Rule: CallSuperInConstructor
+    Category: Code Style
+    Priority: Medium
+    Line: 39
+    Message: It is a good practice to call super() in a constructor
+    Code:
+         37:     private int _max = -1;
+         38: 
+      >> 39:     public LRUMap() {
+         40:     }
+         41:
+
+[3] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 42
+    Message: Parameter 'initCapacity' is not assigned and could be declared final
+    Code:
+         40:     }
+         41: 
+      >> 42:     public LRUMap(int initCapacity) {
+         43:         super(initCapacity);
+         44:     }
+
+[4] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 46
+    Message: Parameter 'initCapacity' is not assigned and could be declared final
+    Code:
+         44:     }
+         45: 
+      >> 46:     public LRUMap(int initCapacity, float loadFactor) {
+         47:         super(initCapacity, loadFactor);
+         48:     }
+
+[5] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 46
+    Message: Parameter 'loadFactor' is not assigned and could be declared final
+    Code:
+         44:     }
+         45: 
+      >> 46:     public LRUMap(int initCapacity, float loadFactor) {
+         47:         super(initCapacity, loadFactor);
+         48:     }
+
+[6] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 50
+    Message: Parameter 'map' is not assigned and could be declared final
+    Code:
+         48:     }
+         49: 
+      >> 50:     public LRUMap(Map map) {
+         51:         super(map);
+         52:     }
+
+[7] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 60
+    Message: Parameter 'max' is not assigned and could be declared final
+    Code:
+         58: 
+         59:     @Override
+      >> 60:     public void setMaxSize(int max) {
+         61:         if (max < 0)
+         62:             throw new IllegalArgumentException(String.valueOf(max));
+
+[8] Rule: ControlStatementBraces
+    Category: Code Style
+    Priority: Medium
+    Line: 62
+    Message: This statement should have braces
+    Code:
+         60:     public void setMaxSize(int max) {
+         61:         if (max < 0)
+      >> 62:             throw new IllegalArgumentException(String.valueOf(max));
+         63:         _max = max;
+         64:
+
+[9] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 87
+    Message: Parameter 'entry' is not assigned and could be declared final
+    Code:
+         85: 
+         86:     @Override
+      >> 87:     protected boolean removeLRU(LinkEntry entry) {
+         88:         overflowRemoved(entry.getKey(), entry.getValue());
+         89:         return super.removeLRU(entry);
+
+[10] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 93
+    Message: Parameter 'out' is not assigned and could be declared final
+    Code:
+         91: 
+         92:     @Override
+      >> 93:     protected void doWriteObject(ObjectOutputStream out) throws IOException {
+         94:         out.writeInt(_max);
+         95:         super.doWriteObject(out);
+
+[11] Rule: ShortVariable
+    Category: Code Style
+    Priority: Medium
+    Line: 99
+    Message: Avoid variables with short names like in
+    Code:
+         97: 
+         98:     @Override
+      >> 99:     protected void doReadObject(ObjectInputStream in)
+         100:         throws IOException, ClassNotFoundException {
+         101:         _max = in.readInt();
+
+[12] Rule: MethodArgumentCouldBeFinal
+    Category: Code Style
+    Priority: Medium
+    Line: 99
+    Message: Parameter 'in' is not assigned and could be declared final
+    Code:
+         97: 
+         98:     @Override
+      >> 99:     protected void doReadObject(ObjectInputStream in)
+         100:         throws IOException, ClassNotFoundException {
+         101:         _max = in.readInt();
+
+
