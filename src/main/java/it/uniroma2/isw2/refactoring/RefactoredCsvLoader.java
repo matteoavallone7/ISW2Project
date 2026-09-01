@@ -12,13 +12,7 @@ import java.util.Map;
 
 public class RefactoredCsvLoader {
 
-    /**
-     * Loads a CSV file into a list of rows.
-     *
-     * Each row is represented as:
-     *
-     * Map<columnName, value>
-     */
+
     public List<Map<String, String>> load(String csvPath)
             throws IOException {
 
@@ -37,27 +31,19 @@ public class RefactoredCsvLoader {
             }
 
             List<String> headers = parseLine(headerLine);
-
             String line;
 
             while ((line = reader.readLine()) != null) {
-
                 if (line.isBlank()) {
                     continue;
                 }
 
                 List<String> values = parseLine(line);
-
-                Map<String, String> row =
-                        new LinkedHashMap<>();
+                Map<String, String> row = new LinkedHashMap<>();
 
                 for (int i = 0; i < headers.size(); i++) {
 
-                    String value =
-                            i < values.size()
-                                    ? values.get(i)
-                                    : "";
-
+                    String value = i < values.size() ? values.get(i) : "";
                     row.put(headers.get(i), value);
                 }
 
@@ -68,9 +54,7 @@ public class RefactoredCsvLoader {
         return rows;
     }
 
-    /**
-     * Writes a list of rows back to a CSV file.
-     */
+
     public void write(
             List<Map<String, String>> rows,
             String csvPath) throws IOException {
@@ -87,13 +71,10 @@ public class RefactoredCsvLoader {
 
         Map<String, String> firstRow = rows.get(0);
 
-        try (BufferedWriter writer =
-                     Files.newBufferedWriter(path)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
 
             // Header
-            writer.write(
-                    String.join(",", firstRow.keySet())
-            );
+            writer.write(String.join(",", firstRow.keySet()));
             writer.newLine();
 
             // Data
@@ -103,32 +84,21 @@ public class RefactoredCsvLoader {
 
                 for (String header : firstRow.keySet()) {
 
-                    String value =
-                            row.getOrDefault(header, "");
-
+                    String value = row.getOrDefault(header, "");
                     values.add(csvEscape(value));
                 }
 
-                writer.write(
-                        String.join(",", values)
-                );
+                writer.write(String.join(",", values));
                 writer.newLine();
             }
         }
     }
 
-    /**
-     * Parses one CSV line.
-     *
-     * Handles values enclosed in double quotes and
-     * escaped double quotes.
-     */
+
     private List<String> parseLine(String line) {
 
         List<String> values = new ArrayList<>();
-
         StringBuilder current = new StringBuilder();
-
         boolean insideQuotes = false;
 
         for (int i = 0; i < line.length(); i++) {
@@ -136,17 +106,11 @@ public class RefactoredCsvLoader {
             char c = line.charAt(i);
 
             if (c == '"') {
-
-                // Escaped quote: ""
-                if (insideQuotes
-                        && i + 1 < line.length()
-                        && line.charAt(i + 1) == '"') {
-
+                if (insideQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
                     current.append('"');
                     i++;
 
                 } else {
-
                     insideQuotes = !insideQuotes;
                 }
 
@@ -156,19 +120,15 @@ public class RefactoredCsvLoader {
                 current.setLength(0);
 
             } else {
-
                 current.append(c);
             }
         }
 
         values.add(current.toString());
-
         return values;
     }
 
-    /**
-     * Escapes a value according to CSV rules.
-     */
+
     private String csvEscape(String value) {
 
         if (value == null) {

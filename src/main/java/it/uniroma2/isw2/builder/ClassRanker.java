@@ -18,7 +18,7 @@ public class ClassRanker {
 
     // ── Configuration ─────────────────────────────────────────────────────────
     private static final String  LAST_RELEASE = "4.1.1";
-    private static final int     MIN_LOC      = 80;   // exclude trivially small files
+    private static final int     MIN_LOC      = 80;   // escludi file troppo piccoli
     private static final int     MIN_METHODS = 5;
     private static final int     MAX_METHODS = 100;
     private static final int     NAME_INITIAL_INDEX = 3; // M=13, 13 mod 5 = 3
@@ -31,7 +31,6 @@ public class ClassRanker {
         this.outputDir = outputDir;
     }
 
-    // ── Entry point ────────────────────────────────────────────────────────────
 
     public void run() throws Exception {
         LOGGER.info("=== Milestone 4 - Class Ranking for " + LAST_RELEASE + " ===");
@@ -136,7 +135,6 @@ public class ClassRanker {
                 + selected2.path + " — smells =" + selected2.smells
                 + " LOC =" + selected2.loc);
 
-        // Step 7: write CSVs
         new File(outputDir).mkdirs();
         writeRankedList(filtered, selected1, selected2);
         writeSelectedPair(selected1, selected2, n);
@@ -144,7 +142,6 @@ public class ClassRanker {
         LOGGER.info("=== Done ===");
     }
 
-    // ── File analysis helpers ─────────────────────────────────────────────────
 
     private int countLoc(String content) {
         return (int) content.lines()
@@ -152,10 +149,6 @@ public class ClassRanker {
                 .count();
     }
 
-    /**
-     * Returns true if the file's primary type declaration is an interface.
-     * Looks for `public interface` or `interface` at top level.
-     */
     private boolean isInterface(String content) {
         return content.lines().anyMatch(l -> {
             String t = l.trim();
@@ -163,9 +156,7 @@ public class ClassRanker {
         });
     }
 
-    /**
-     * Returns true if the primary class declaration contains `abstract`.
-     */
+
     private boolean isAbstract(String content) {
         return content.lines().anyMatch(l -> {
             String t = l.trim();
@@ -178,7 +169,6 @@ public class ClassRanker {
     private boolean isDataOrEventClass(String path) {
         String name = new File(path).getName();
 
-        // Check naming conventions for pure value/event containers
         if (name.endsWith("Event.java") ||
                 name.endsWith("Exception.java") ||
                 name.endsWith("Info.java") ||
@@ -187,7 +177,6 @@ public class ClassRanker {
             return true;
         }
 
-        // Check parent class inheritance
         try {
             String lowerContent = Files.readString(Path.of(path)).toLowerCase();
             return lowerContent.contains("extends eventobject")
@@ -321,7 +310,7 @@ public class ClassRanker {
                 || lowerContent.contains("junit.framework")
                 || lowerContent.contains("org.testng");
     }
-    // ── CSV output ────────────────────────────────────────────────────────────
+
 
     private void writeRankedList(List<ClassInfo> ranked,
                                  ClassInfo sel1, ClassInfo sel2)
@@ -377,7 +366,6 @@ public class ClassRanker {
         LOGGER.info("Selected pair written to " + path);
     }
 
-    // ── Git checkout ──────────────────────────────────────────────────────────
 
     private void checkout() {
         try {

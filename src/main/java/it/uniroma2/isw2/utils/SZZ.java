@@ -7,18 +7,7 @@ import java.util.regex.*;
 import it.uniroma2.isw2.builder.GitMetrics;
 import it.uniroma2.isw2.model.Ticket;
 
-/**
- * Implements the SZZ algorithm to identify which Java files are buggy.
- *
- * Responsibility: answer "WHICH FILES?" only.
- * The release range [IV, FV) is determined separately by ProportionMethod.
- *
- * For each ticket:
- *   1. Find fix commits via git log --grep
- *   2. For each fix commit, get removed lines per file (git diff-tree)
- *   3. Run git blame on the parent to find introducing commits per file
- *   4. Return the set of file paths confirmed as buggy
- */
+
 public class SZZ {
 
     private static final Logger logger = Logger.getLogger(SZZ.class.getName());
@@ -82,7 +71,6 @@ public class SZZ {
         return buggyFiles;
     }
 
-    // ── Private helpers ─────────────────────────────────────────────────────────
 
     /**
      * Parses `git diff-tree --unified=0` output.

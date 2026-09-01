@@ -6,19 +6,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
-////**
-// * Implements the Proportion Total method to determine IV and FV indices
-// * for each bug ticket.
-// *
-//         * Responsibility: answer "WHICH RELEASES?" only.
-// * Which files are buggy is determined separately by SZZ.
-// *
-//         * Formula:  P = (FV - IV) / (FV - OV)  →  IV = FV - P * (FV - OV)
-//        *
-//        *   OV = Opening Version : first release after ticket creation date
-// *   FV = Fix Version     : release where the bug was fixed
-// *   IV = Injected Version: release where the bug was introduced
-// ** P is computed as the average over all tickets that have AV (Proportion Total).
 
 public class ProportionMethod {
 
@@ -29,10 +16,7 @@ public class ProportionMethod {
         this.sortedReleases = new ArrayList<>(sortedReleases);
     }
 
-    /**
-     * Computes the global Proportion value P using all tickets that have AV.
-     * This is the "Total" variant: one P value computed across all tickets at once.
-     */
+
     public double computeP(List<Ticket> tickets,
                            Map<String, LocalDateTime> nameToDate) {
         double sumP  = 0;
@@ -101,7 +85,6 @@ public class ProportionMethod {
         return fv != null ? sortedReleases.indexOf(fv) : -1;
     }
 
-    // ── Private helpers ─────────────────────────────────────────────────────────
 
     /**
      * Estimates IV using the Proportion formula when AV is not available.

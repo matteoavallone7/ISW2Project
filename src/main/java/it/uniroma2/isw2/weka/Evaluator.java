@@ -8,17 +8,7 @@ import weka.core.Instances;
 import java.util.Random;
 import java.util.logging.Logger;
 
-/**
- * Runs 10-fold cross-validation (repeated 10 times) and returns the five metrics.
- * Metrics returned (indices 0–4):
- *   0 – Precision  (positive/buggy class)
- *   1 – Recall     (positive/buggy class)
- *   2 – AUC        (area under ROC, positive class)
- *   3 – Kappa      (Cohen's kappa, overall)
- *   4 – NPofB20    (bugs found in top 20% by predicted probability)
- * NaN values (produced when no instance is predicted as positive) are
- * replaced with 0.0 to avoid propagating NaN into the output CSV.
- */
+
 public class Evaluator {
 
     private final NpofB20Service np;

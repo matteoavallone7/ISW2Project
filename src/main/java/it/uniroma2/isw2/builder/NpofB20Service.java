@@ -7,14 +7,7 @@ import weka.classifiers.evaluation.Prediction;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Computes NPofB20: the fraction of bugs found when inspecting
- * only the top 20% of files ranked by predicted buggy probability.
- * Formula:  NPofB20 = |bugs in top-20%| / |total bugs|
- * Interpretation:
- *   1.0  → all bugs are in the top 20%: perfect prioritization
- *   0.20 → no better than random inspection
- */
+
 
 public class NpofB20Service {
 

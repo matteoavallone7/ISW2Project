@@ -65,23 +65,13 @@ public class Main {
                                 Path.of(REPO, "refactoring")
                         );
 
-                service.writeCsv(
-                        Path.of(
-                                OUTPUT,
-                                "OPENJPA_refactoring_dataset.csv"
-                        )
-                );
+                service.writeCsv(Path.of(OUTPUT, "OPENJPA_refactoring_dataset.csv"));
 
                 String metrics = OUTPUT + "/OPENJPA_refactoring_dataset.csv";
                 // 2. Dataset originale usato per il training
-                String trainingCsv =
-                        OUTPUT + "/OPENJPA_full_dataset.csv";
-
-                RefactoredCsvLoader loader =
-                        new RefactoredCsvLoader();
-
-                List<Map<String, String>> rows =
-                        loader.load(metrics);
+                String trainingCsv = OUTPUT + "/OPENJPA_full_dataset.csv";
+                RefactoredCsvLoader loader = new RefactoredCsvLoader();
+                List<Map<String, String>> rows = loader.load(metrics);
 
                 // 3. Crea il predictor
                 RefactoredPredictorService predictor =
@@ -92,15 +82,8 @@ public class Main {
                         );
 
                 // 4. Training + predizioni sulle versioni refactored
-                predictor.annotateWithPredictions(
-                        rows,
-                        trainingCsv
-                );
-
-                loader.write(
-                        rows,
-                        OUTPUT + "/OPENJPA_refactored_predictions.csv"
-                );
+                predictor.annotateWithPredictions(rows, trainingCsv);
+                loader.write(rows, OUTPUT + "/OPENJPA_refactored_predictions.csv");
 
                 System.out.println("3. Loading original correlations...");
 
@@ -109,17 +92,14 @@ public class Main {
                                 OUTPUT + "/OPENJPA_correlation.csv"
                         );
 
-                System.out.println(
-                        "   Loaded correlations: " + correlations.size()
-                );
+                System.out.println("   Loaded correlations: " + correlations.size());
 
                 // ---------------------------------------------------------
                 // 4. Compute refactoring impact
                 // ---------------------------------------------------------
                 System.out.println("4. Computing refactoring impact...");
 
-                RefactoringImpactService impactService =
-                        new RefactoringImpactService();
+                RefactoringImpactService impactService = new RefactoringImpactService();
 
                 List<Map<String, String>> impact =
                         impactService.compute(
@@ -127,25 +107,15 @@ public class Main {
                                 correlations
                         );
 
-                System.out.println(
-                        "   Impact rows: " + impact.size()
-                );
+                System.out.println("   Impact rows: " + impact.size());
 
                 // ---------------------------------------------------------
                 // 5. Write impact CSV
                 // ---------------------------------------------------------
-                String impactFile =
-                        OUTPUT + "/OPENJPA_refactoring_impact.csv";
+                String impactFile = OUTPUT + "/OPENJPA_refactoring_impact.csv";
+                loader.write(impact, impactFile);
 
-                loader.write(
-                        impact,
-                        impactFile
-                );
-
-                System.out.println(
-                        "5. Impact CSV written to: " + impactFile
-                );
-
+                System.out.println("5. Impact CSV written to: " + impactFile);
                 System.out.println("=== END REFACTORING ANALYSIS ===");
                 break;
 

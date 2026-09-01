@@ -15,14 +15,7 @@ public class RefactoringImpactService {
 
         List<Map<String, String>> results = new ArrayList<>();
 
-        /*
-         * Process each class independently.
-         *
-         * Example:
-         *
-         * LRUMap  -> C0, C1, C2, C3
-         * Filters -> C0, C1, C2, C3, C4
-         */
+
         Map<String, List<Map<String, String>>> byClass =
                 groupByClass(refactoredRows);
 
@@ -31,8 +24,7 @@ public class RefactoringImpactService {
 
             String className = entry.getKey();
 
-            List<Map<String, String>> classRows =
-                    entry.getValue();
+            List<Map<String, String>> classRows = entry.getValue();
 
             /*
              * Find C0.
@@ -48,22 +40,17 @@ public class RefactoringImpactService {
              */
             for (Map<String, String> correlation : correlations) {
 
-                String feature =
-                        correlation.get("Feature");
+                String feature = correlation.get("Feature");
+                String correlationString = correlation.get("Defectiveness");
 
-                String correlationString =
-                        correlation.get("Defectiveness");
-
-                if (feature == null
-                        || correlationString == null) {
+                if (feature == null || correlationString == null) {
                     continue;
                 }
 
                 double correlationValue;
 
                 try {
-                    correlationValue =
-                            Double.parseDouble(correlationString);
+                    correlationValue = Double.parseDouble(correlationString);
                 } catch (NumberFormatException e) {
                     continue;
                 }
@@ -75,8 +62,7 @@ public class RefactoringImpactService {
                     continue;
                 }
 
-                Map<String, String> result =
-                        new LinkedHashMap<>();
+                Map<String, String> result = new LinkedHashMap<>();
 
                 result.put("class_name", className);
                 result.put("feature", feature);
@@ -113,13 +99,9 @@ public class RefactoringImpactService {
                 /*
                  * C0 value.
                  */
-                double c0Value =
-                        Double.parseDouble(c0.get(feature));
+                double c0Value = Double.parseDouble(c0.get(feature));
 
-                result.put(
-                        "C0",
-                        format(c0Value)
-                );
+                result.put("C0", format(c0Value));
 
                 /*
                  * Compare every refactored version
@@ -127,61 +109,38 @@ public class RefactoringImpactService {
                  */
                 for (Map<String, String> row : classRows) {
 
-                    String version =
-                            row.get("version");
+                    String version = row.get("version");
 
                     if ("C0".equals(version)) {
                         continue;
                     }
 
-                    String valueString =
-                            row.get(feature);
+                    String valueString = row.get(feature);
 
                     if (!isNumeric(valueString)) {
                         continue;
                     }
 
-                    double value =
-                            Double.parseDouble(valueString);
-
-                    double delta =
-                            value - c0Value;
-
+                    double value = Double.parseDouble(valueString);
+                    double delta = value - c0Value;
                     double relativeChange = 0.0;
 
                     if (c0Value != 0.0) {
                         relativeChange = (value - c0Value) / c0Value;
                     }
 
-                    result.put(
-                            version,
-                            format(value)
-                    );
+                    result.put(version, format(value));
+                    result.put("delta_" + version, format(delta));
 
-                    result.put(
-                            "delta_" + version,
-                            format(delta)
-                    );
-
-                    result.put(
-                            "relative_change_" + version,
-                            format(relativeChange)
-                    );
+                    result.put("relative_change_" + version, format(relativeChange));
 
                     /*
                      * Determine whether the change is potentially
                      * good or bad according to the correlation.
                      */
-                    String impact =
-                            determineImpact(
-                                    correlationValue,
-                                    delta
-                            );
+                    String impact = determineImpact(correlationValue, delta);
 
-                    result.put(
-                            "impact_" + version,
-                            impact
-                    );
+                    result.put("impact_" + version, impact);
                 }
 
                 results.add(result);
@@ -197,24 +156,20 @@ public class RefactoringImpactService {
     private Map<String, List<Map<String, String>>> groupByClass(
             List<Map<String, String>> rows) {
 
-        Map<String, List<Map<String, String>>> grouped =
-                new LinkedHashMap<>();
+        Map<String, List<Map<String, String>>> grouped = new LinkedHashMap<>();
 
         for (Map<String, String> row : rows) {
 
-            String className =
-                    row.get("class_name");
+            String className = row.get("class_name");
 
             if (className == null) {
                 continue;
             }
 
-            grouped
-                    .computeIfAbsent(
+            grouped.computeIfAbsent(
                             className,
                             k -> new ArrayList<>()
-                    )
-                    .add(row);
+                    ).add(row);
         }
 
         return grouped;

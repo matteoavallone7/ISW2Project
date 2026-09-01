@@ -16,14 +16,12 @@ import java.util.regex.Pattern;
 public class DatasetBuilder {
 
     private static final Logger logger = Logger.getLogger(DatasetBuilder.class.getName());
-    // ── Configuration ───────────────────────────────────────────────────────────
     private static final String PROJECT_NAME = "OPENJPA";
 
     // Proportion of releases to KEEP (first 34%)
     private static final double KEEP_RATIO  = 0.34;
     private static final Pattern PRE_RELEASE = Pattern.compile("(?i).*(alpha|beta|rc|snapshot|m\\d+|ea\\d*).*");
 
-    // ── CSV header ───────────────────────────────────────────────────────────────
     private static final String[] CSV_HEADER = {
             "Version",
             "VersionIndex",
@@ -306,7 +304,6 @@ public class DatasetBuilder {
         return buggySet;
     }
 
-    // ── Row builder ──────────────────────────────────────────────────────────────
     private static String[] buildRow(String tag, int relIdx, String filePath,
                                      GitMetrics.Metrics m, String buggy) {
         return new String[]{
@@ -361,7 +358,6 @@ public class DatasetBuilder {
         return bestHash != null ? bestHash : git.getFirstCommitHash();
     }
 
-    // ── CSV writer (Commons CSV) ──────────────────────────────────────────────────
     private static void writeCSV(List<String[]> rows, String filePath)
             throws IOException {
         try (FileWriter fw = new FileWriter(filePath);
@@ -374,7 +370,6 @@ public class DatasetBuilder {
     }
 
 
-    // ── Utility ──────────────────────────────────────────────────────────────────
     private static void printBugStats(String label, List<String[]> rows) {
         long yes = rows.stream().filter(r -> "Yes".equals(r[r.length - 1])).count();
         System.out.printf("  %s buggy: %d / %d (%.1f%%)%n",

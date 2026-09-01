@@ -21,23 +21,7 @@ import weka.filters.supervised.instance.SMOTE;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Assembles the final Weka Classifier for a given combination of
- * ClassifierType × feature-selection × balancing.
- * Feature selection: Wrapper approach using WrapperSubsetEval + GreedyStepwise
- * (forward search). Uses NaiveBayes as the internal classifier and AUC as the
- * evaluation measure, since accuracy is dominated by the majority class on
- * imbalanced data.
- * Balancing: Oversampling via Weka's Resample filter with biasToUniformClass=1.0.
- * Draws minority instances more frequently until the class distribution is
- * approximately balanced.
- * Both filters are applied inside FilteredClassifier so they are fitted
- * exclusively on the training fold of every CV split — never on the test fold.
- * This prevents data leakage.
- * Filter order when both are active: balancing first, then feature selection.
- * Rationale: feature selection should observe the balanced class distribution
- * when computing attribute scores, not the original imbalanced one.
- */
+
 
 public class ClassifierFactory {
 
@@ -86,15 +70,7 @@ public class ClassifierFactory {
         return fc;
     }
 
-    /**
-     * Wrapper feature selection with forward search.
-     * WrapperSubsetEval trains NaiveBayes on candidate subsets and scores them
-     * by AUC (more sensitive than accuracy on imbalanced data).
-     * GreedyStepwise(forward) starts from no attributes and greedily adds
-     * the one that improves AUC the most at each step.
-     * Note: setOptions() must be called before setClassifier() — Weka's
-     * OptionHandler contract resets the internal classifier in setOptions().
-     */
+
 
     private static Filter buildWrapper() {
 

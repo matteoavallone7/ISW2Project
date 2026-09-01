@@ -10,18 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-/**
- * Computes the metrics dataset for the original and refactored versions
- * of LRUMap and Filters.
- *
- * C0:
- *   All metrics are computed from the Git history and PMD analysis.
- *
- * C1, C2, C3, C4:
- *   LOC and NSmells are recomputed on the refactored source code.
- *   All other metrics are inherited from C0, since the refactoring
- *   does not have an independent Git history.
- */
+
 public class RefactoredMetricsService {
 
     private static final String RELEASE = "4.1.1";
@@ -44,12 +33,7 @@ public class RefactoredMetricsService {
     private final GitMetrics gitMetrics;
     private final PMDService pmdService;
 
-    /**
-     * Creates the service.
-     *
-     * @param repoDir         root directory of the OpenJPA repository
-     * @param refactoredDir   directory containing the refactored classes
-     */
+
     public RefactoredMetricsService(File repoDir,
                                     Path refactoredDir
                                     ) {
@@ -61,25 +45,11 @@ public class RefactoredMetricsService {
         this.pmdService = new PMDService();
     }
 
-    /**
-     * Computes the complete dataset.
-     *
-     * The returned list contains:
-     *
-     * LRUMap  -> C0, C1, C2, C3
-     * Filters -> C0, C1, C2, C3, C4
-     *
-     * Every row has the same set of metrics.
-     */
+
     public List<Map<String, String>> compute() {
 
         List<Map<String, String>> rows = new ArrayList<>();
 
-        /*
-         * -------------------------------------------------------------
-         * LRUMap
-         * -------------------------------------------------------------
-         */
         Map<String, String> lruMapC0 = computeC0(
                 LRU_MAP_NAME,
                 LRU_MAP_GIT_PATH,
@@ -94,11 +64,7 @@ public class RefactoredMetricsService {
                 lruMapC0
         ));
 
-        /*
-         * -------------------------------------------------------------
-         * Filters
-         * -------------------------------------------------------------
-         */
+
         Map<String, String> filtersC0 = computeC0(
                 FILTERS_NAME,
                 FILTERS_GIT_PATH,
@@ -132,22 +98,12 @@ public class RefactoredMetricsService {
                 releaseTimestamp
         );
 
-        /*
-         * PMDService returns paths relative to the directory passed
-         * to analyzeRepository().
-         *
-         * For example, for openjpa-lib:
-         *
-         * src/main/java/org/apache/openjpa/lib/util/LRUMap.java
-         */
+
         File moduleDir = new File(repoDir, moduleName);
 
-        Map<String, Integer> smells =
-                pmdService.analyzeRepository(moduleDir);
+        Map<String, Integer> smells = pmdService.analyzeRepository(moduleDir);
 
-        String relativePath = gitPath.substring(
-                moduleName.length() + 1
-        );
+        String relativePath = gitPath.substring(moduleName.length() + 1);
 
         int nSmells = smells.getOrDefault(relativePath, 0);
 
@@ -191,13 +147,8 @@ public class RefactoredMetricsService {
                     ))
                     .forEach(versionDirectory -> {
 
-                        String version =
-                                versionDirectory.getFileName().toString();
+                        String version = versionDirectory.getFileName().toString();
 
-                        /*
-                         * Only directories named C1, C2, C3, C4
-                         * are considered.
-                         */
                         if (!version.matches("C[1-4]")) {
                             return;
                         }
@@ -206,28 +157,16 @@ public class RefactoredMetricsService {
 
                         if (javaFile == null) {
                             throw new IllegalArgumentException(
-                                    "No Java file found in: "
-                                            + versionDirectory
-                            );
+                                    "No Java file found in: " + versionDirectory);
                         }
 
                         int loc = countLoc(javaFile);
-
                         int nSmells = computeSmells(javaFile);
 
-                        /*
-                         * Start from C0 so that all columns are present
-                         * and all process/history metrics remain identical.
-                         */
-                        Map<String, String> row =
-                                new LinkedHashMap<>(c0Row);
 
+                        Map<String, String> row = new LinkedHashMap<>(c0Row);
                         row.put("version", version);
 
-                        /*
-                         * These are the only two metrics that change
-                         * after refactoring.
-                         */
                         row.put("LOC", String.valueOf(loc));
                         row.put("Smells", String.valueOf(nSmells));
 
@@ -245,13 +184,7 @@ public class RefactoredMetricsService {
         return rows;
     }
 
-    /**
-     * Finds the Java file inside a Cx directory.
-     *
-     * Example:
-     *
-     * refactored/lru_map/C1/LRUMap.java
-     */
+
     private Path findJavaFile(Path versionDirectory) {
 
         try (var stream = Files.list(versionDirectory)) {
@@ -276,9 +209,6 @@ public class RefactoredMetricsService {
 
     /**
      * Computes LOC as the number of physical lines in the Java file.
-     *
-     * This is consistent with GitMetrics.countLoc(), which counts
-     * the lines returned by git show.
      */
     private int countLoc(Path javaFile) {
 
@@ -293,12 +223,7 @@ public class RefactoredMetricsService {
         }
     }
 
-    /**
-     * Runs PMD on the directory containing a single refactored class.
-     *
-     * PMDService returns paths relative to the directory passed to it,
-     * therefore the smell count is obtained using only the Java filename.
-     */
+
     private int computeSmells(Path javaFile) {
 
         File directory = javaFile.getParent().toFile();
@@ -362,19 +287,13 @@ public class RefactoredMetricsService {
         return row;
     }
 
-    /**
-     * Writes the computed dataset to a CSV file.
-     *
-     * @param outputFile destination CSV file
-     */
+
     public void writeCsv(Path outputFile) {
 
         List<Map<String, String>> rows = compute();
 
         if (rows.isEmpty()) {
-            throw new IllegalStateException(
-                    "No metrics were computed."
-            );
+            throw new IllegalStateException("No metrics were computed.");
         }
 
         try {
@@ -382,20 +301,14 @@ public class RefactoredMetricsService {
                 Files.createDirectories(outputFile.getParent());
             }
 
-            try (BufferedWriter writer =
-                         Files.newBufferedWriter(outputFile)) {
+            try (BufferedWriter writer = Files.newBufferedWriter(outputFile)) {
 
-                /*
-                 * Header
-                 */
+
                 Map<String, String> firstRow = rows.get(0);
-
                 writer.write(String.join(",", firstRow.keySet()));
                 writer.newLine();
 
-                /*
-                 * Data
-                 */
+
                 for (Map<String, String> row : rows) {
 
                     List<String> values = new ArrayList<>();

@@ -9,10 +9,6 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-/**
- * Computes all class-level metrics from the git log of a repository.
- * Covers every metric required by Milestone 1 (slides 4-5).
- */
 public class GitMetrics {
 
     private final String repoPath;
@@ -30,7 +26,7 @@ public class GitMetrics {
         this.repoPath = repoPath;
     }
 
-    // ── Public result container ─────────────────────────────────────────────────
+    // ── Public result container
     public static class Metrics {
         public int    loc                  = 0;
         public long   locTouched           = 0;
@@ -55,15 +51,7 @@ public class GitMetrics {
         public long   linesDeleted         = 0;
     }
 
-    // ── Entry point ─────────────────────────────────────────────────────────────
-    /**
-     * Compute metrics for a single Java file at a given release.
-     *
-     * @param filePath   relative path inside the repo (e.g. src/Foo.java)
-     * @param prevHash   commit hash of the PREVIOUS release (null for first release)
-     * @param releaseHash commit hash of THIS release
-     * @param releaseTimeSec Unix timestamp (seconds) of this release
-     */
+
     public Metrics compute(String filePath, String prevHash,
                            String releaseHash, long releaseTimeSec) {
         Metrics m = new Metrics();
@@ -110,7 +98,6 @@ public class GitMetrics {
             m.entropy /= m.nr;
         }
 
-        // 3. Age
         long first = getFileFirstCommitTimestamp(filePath, releaseHash);
         if (first <= 0) first = releaseTimeSec;
 
@@ -126,7 +113,7 @@ public class GitMetrics {
         long deleted;
     }
 
-    // ── Private inner class for per-commit data ─────────────────────────────────
+
     private static class CommitStat {
         String hash;
         String author;
@@ -212,14 +199,12 @@ public class GitMetrics {
         return list;
     }
 
-    // ── LOC at tag ──────────────────────────────────────────────────────────────
     private int countLoc(String filePath, String ref) {
         String out = runGit(Arrays.asList("git", "show", ref + ":" + filePath));
         if (out.isBlank()) return 0;
         return (int) out.lines().count();
     }
 
-    // ── Change-set size (files committed together) ──────────────────────────────
     public long changeSetSize(String commitHash) {
         String out = runGit(Arrays.asList(
                 "git", "diff-tree", "--no-commit-id", "-r", "--name-only", commitHash));
@@ -248,7 +233,6 @@ public class GitMetrics {
         return files;
     }
 
-    /** Returns Unix timestamp (seconds) of the commit pointed to by ref. */
     public long getTimestamp(String ref) {
         String ts = runGit(Arrays.asList(
                 "git", "log", "-1", "--format=%ct", ref)).trim();
@@ -348,7 +332,6 @@ public class GitMetrics {
         }
     }
 
-    /** Returns all stable tags (x.y.z, no snapshot/beta/RC) sorted by date. */
     public List<String[]> getStableReleasesSortedByDate() {
         String out = runGit(Arrays.asList("git", "tag"));
         List<String[]> dated = new ArrayList<>();
@@ -366,7 +349,6 @@ public class GitMetrics {
         return dated;
     }
 
-    /** Returns the first-ever commit hash in the repo. */
     public String getFirstCommitHash() {
         String out = runGit(Arrays.asList(
                 "git", "rev-list", "--max-parents=0", "HEAD")).trim();

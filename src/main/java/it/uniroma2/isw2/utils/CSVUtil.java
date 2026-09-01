@@ -15,11 +15,9 @@ public class CSVUtil {
             List<PredictionSummary> rows,
             String file) throws Exception {
 
-        try(PrintWriter out =
-                    new PrintWriter(file)){
+        try(PrintWriter out = new PrintWriter(file)){
 
-            out.println(
-                    "Dataset,Instances,Actual_Buggy,Estimated_Buggy");
+            out.println("Dataset,Instances,Actual_Buggy,Estimated_Buggy");
 
             for(PredictionSummary r : rows){
 
@@ -37,13 +35,10 @@ public class CSVUtil {
             PreventionSummary p,
             String file) throws Exception {
 
-        try(PrintWriter out =
-                    new PrintWriter(file)){
+        try(PrintWriter out = new PrintWriter(file)){
 
             out.println("Statistic,Value");
-
-            out.printf("Preventable,%d%n",
-                    p.getPreventable());
+            out.printf("Preventable,%d%n", p.getPreventable());
 
             out.printf(Locale.US,
                     "Proportion,%.4f%n",
